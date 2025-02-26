@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/SphereComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Ball.generated.h"
 
 UCLASS()
@@ -30,6 +32,17 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UStaticMeshComponent* BallMesh;
+
+	UPROPERTY(EditAnyWhere, Category ="Collision")
+	TEnumAsByte<ECollisionChannel> TraceChannelProperty = ECC_WorldDynamic;
+
+	UPROPERTY(Replicated)
+	FVector Move;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
+	UPROPERTY()
+	AActor* PreActor = nullptr;
 
 	
 };
