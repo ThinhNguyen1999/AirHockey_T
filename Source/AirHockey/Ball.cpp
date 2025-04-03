@@ -5,6 +5,8 @@
 #include "Wall.h"
 #include "Kismet/KismetMathLibrary.h"
 #include <Kismet/KismetSystemLibrary.h>
+
+#include "Handle.h"
 #include "Components/SphereComponent.h"
 #include "Net/UnrealNetwork.h"
 
@@ -70,7 +72,16 @@ void ABall::Tick(float DeltaTime)
 
 	if  (Hit.GetActor() && PreActor!= Hit.GetActor())
 	{
-		
+		if (Cast<AHandle>(Hit.GetActor()))
+		{
+			AHandle* Handle = Cast<AHandle>(Hit.GetActor());
+			if (Handle)
+			{
+				FVector HandleVelocity = Handle->GetHandleVelocity();
+				float HandleSpeed = HandleVelocity.Size();
+				float OrigialZ = Move.Z;
+			}
+		}
 		
 	}
 	
