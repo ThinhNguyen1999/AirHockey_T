@@ -28,5 +28,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UStaticMeshComponent* HandleMesh;
-	
+
+	FVector GetHandleVelocity() const;
+
+
+private:
+	FVector HandleVelocity;
 };

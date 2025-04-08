@@ -3,6 +3,7 @@
 
 #include "Ball.h"
 #include "Wall.h"
+#include "ScoreArea.h"
 #include "Kismet/KismetMathLibrary.h"
 #include <Kismet/KismetSystemLibrary.h>
 
@@ -16,12 +17,12 @@ ABall::ABall()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	BallCollision = CreateDefaultSubobject<USphereComponent>(TEXT("BallCollision"));
-	BallCollision->SetupAttachment(BallMesh);
+	BallCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Ball Collision"));
+	SetRootComponent(BallCollision);
 
-	BallMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BallMesh"));
-		SetRootComponent(BallMesh);
-	
+	BallMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Ball Mesh"));
+	BallMesh->SetupAttachment(BallCollision);
+
 	bReplicates = true;
 
 }
@@ -80,9 +81,38 @@ void ABall::Tick(float DeltaTime)
 				FVector HandleVelocity = Handle->GetHandleVelocity();
 				float HandleSpeed = HandleVelocity.Size();
 				float OrigialZ = Move.Z;
+
+
+				// thay đổi speed của trái banh.
+				if (HandleSpeed >1800.0f)
+				{
+					HandleSpeed =1500.0f;
+					HandleSpeed = HandleSpeed/100;
+					FVector normal = GetActorLocation() - Hit.GetActor()->GetActorLocation();
+					normal.Z = Move.Z;
+					Move = UKismetMathLibrary::MirrorVectorByNormal(Move,normal);
+
+					Move = Move* 0.8 + HandleSpeed;
+					Move.Z = OrigialZ;
+					UE_LOG(LogTemp, Warning, TEXT("Handle Speed: %f"), HandleSpeed);
+				}
+				else
+				{
+					FVector normal = GetActorLocation() - Hit.GetActor()->GetActorLocation();
+					Move = UKismetMathLibrary::MirrorVectorByNormal(Move,normal);
+					Move = Move* 0.8;
+				}
 			}
 		}
-		
+		else if (Cast<AWall>(Hit.GetActor()))
+		{
+			Move.X *=-1;
+		}
+		else if (Cast<AScoreArea>(Hit.GetActor()))
+		{
+			Move.Y *= -1;
+		}
+		PreActor = Hit.GetActor();
 	}
 	
 }

@@ -33,3 +33,7 @@ void AHandle::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+FVector AHandle::GetHandleVelocity() const
+{
+	return HandleVelocity;
+} 
